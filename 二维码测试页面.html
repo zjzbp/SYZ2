@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>二维码生成测试页面</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card h2 {
+            color: #4A90E2;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            border-bottom: 2px solid #4A90E2;
+            padding-bottom: 10px;
+        }
+
+        .qrcode-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 320px;
+            background: #f7f8fa;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            padding: 20px;
+        }
+
+        .qrcode-container img {
+            max-width: 100%;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .loading {
+            color: #999;
+            font-size: 14px;
+        }
+
+        .custom-section {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .custom-section h2 {
+            color: #4A90E2;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #4A90E2;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        button {
+            flex: 1;
+            padding: 12px 24px;
+            background: linear-gradient(90deg, #4A90E2 0%, #357ABD 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(74, 144, 226, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .download-btn {
+            background: linear-gradient(90deg, #11998e 0%, #38ef7d 100%);
+        }
+
+        .info-box {
+            background: #e3f2fd;
+            border-left: 4px solid #4A90E2;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 5px;
+        }
+
+        .info-box p {
+            margin: 5px 0;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .info-box code {
+            background: #fff;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            color: #4A90E2;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔲 二维码生成测试页面</h1>
+
+        <div class="cards">
+            <!-- 普通登录二维码 -->
+            <div class="card">
+                <h2>普通登录二维码</h2>
+                <div class="qrcode-container" id="normalLogin">
+                    <p class="loading">加载中...</p>
+                </div>
+                <div class="info-box">
+                    <p><strong>接口:</strong> <code>GET /qrcode/login</code></p>
+                    <p><strong>说明:</strong> 默认跳转到登录页面</p>
+                </div>
+            </div>
+
+            <!-- 带Logo的登录二维码 -->
+            <div class="card">
+                <h2>带Logo登录二维码</h2>
+                <div class="qrcode-container" id="logoLogin">
+                    <p class="loading">加载中...</p>
+                </div>
+                <div class="info-box">
+                    <p><strong>接口:</strong> <code>GET /qrcode/login?withLogo=true</code></p>
+                    <p><strong>说明:</strong> 带默认蓝色圆形Logo</p>
+                </div>
+            </div>
+
+            <!-- 大尺寸二维码 -->
+            <div class="card">
+                <h2>大尺寸二维码 (500x500)</h2>
+                <div class="qrcode-container" id="largeQrcode">
+                    <p class="loading">加载中...</p>
+                </div>
+                <div class="info-box">
+                    <p><strong>接口:</strong> <code>GET /qrcode/generate?width=500&height=500</code></p>
+                    <p><strong>说明:</strong> 自定义尺寸</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 自定义生成 -->
+        <div class="custom-section">
+            <h2>自定义生成二维码</h2>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+                <div>
+                    <div class="form-group">
+                        <label>二维码内容/链接</label>
+                        <input type="text" id="customContent" value="http://localhost:5173/#/" placeholder="输入要生成的内容">
+                    </div>
+
+                    <div class="form-group">
+                        <label>宽度 (px)</label>
+                        <input type="number" id="customWidth" value="400" min="100" max="1000">
+                    </div>
+
+                    <div class="form-group">
+                        <label>高度 (px)</label>
+                        <input type="number" id="customHeight" value="400" min="100" max="1000">
+                    </div>
+
+                    <div class="form-group">
+                        <label>类型</label>
+                        <select id="customType">
+                            <option value="normal">普通二维码</option>
+                            <option value="logo">带Logo二维码</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" id="logoUrlGroup" style="display: none;">
+                        <label>Logo设置</label>
+                        <select id="logoType" onchange="toggleLogoInput()">
+                            <option value="default">默认蓝色Logo</option>
+                            <option value="local">本地Logo文件</option>
+                            <option value="url">网络Logo URL</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" id="logoInputGroup" style="display: none;">
+                        <label id="logoInputLabel">Logo文件名</label>
+                        <input type="text" id="logoUrl" placeholder="例如: logo.png">
+                        <small style="color: #999; font-size: 12px; margin-top: 5px; display: block;">
+                            提示：Logo文件应放在 syz-user/src/main/resources/static/logos/ 目录下
+                        </small>
+                    </div>
+
+                    <div class="button-group">
+                        <button onclick="generateCustomQrcode()">生成二维码</button>
+                        <button class="download-btn" onclick="downloadCustomQrcode()">下载二维码</button>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="qrcode-container" id="customQrcode" style="min-height: 450px;">
+                        <p class="loading">请配置参数并点击生成</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:8080';
+
+        // 页面加载时生成预设二维码
+        window.onload = function() {
+            loadQrcode('normalLogin', `${API_BASE}/qrcode/login`);
+            loadQrcode('logoLogin', `${API_BASE}/qrcode/login?withLogo=true`);
+            loadQrcode('largeQrcode', `${API_BASE}/qrcode/generate?width=500&height=500`);
+        };
+
+        // 加载二维码
+        function loadQrcode(containerId, url) {
+            const container = document.getElementById(containerId);
+            const img = document.createElement('img');
+            img.src = url;
+            img.alt = '二维码';
+            img.onload = function() {
+                container.innerHTML = '';
+                container.appendChild(img);
+            };
+            img.onerror = function() {
+                container.innerHTML = '<p style="color: red;">加载失败，请确保后端服务已启动</p>';
+            };
+        }
+
+        // 切换类型时显示/隐藏Logo URL输入框
+        document.getElementById('customType').addEventListener('change', function() {
+            const logoUrlGroup = document.getElementById('logoUrlGroup');
+            const logoInputGroup = document.getElementById('logoInputGroup');
+            if (this.value === 'logo') {
+                logoUrlGroup.style.display = 'block';
+            } else {
+                logoUrlGroup.style.display = 'none';
+                logoInputGroup.style.display = 'none';
+            }
+        });
+
+        // 切换Logo类型时显示/隐藏输入框
+        function toggleLogoInput() {
+            const logoType = document.getElementById('logoType').value;
+            const logoInputGroup = document.getElementById('logoInputGroup');
+            const logoInputLabel = document.getElementById('logoInputLabel');
+            const logoUrlInput = document.getElementById('logoUrl');
+            
+            if (logoType === 'default') {
+                logoInputGroup.style.display = 'none';
+                logoUrlInput.value = '';
+            } else if (logoType === 'local') {
+                logoInputGroup.style.display = 'block';
+                logoInputLabel.textContent = 'Logo文件名';
+                logoUrlInput.placeholder = '例如: logo.png';
+            } else if (logoType === 'url') {
+                logoInputGroup.style.display = 'block';
+                logoInputLabel.textContent = 'Logo URL';
+                logoUrlInput.placeholder = '例如: https://example.com/logo.png';
+            }
+        }
+
+        // 生成自定义二维码
+        function generateCustomQrcode() {
+            const content = document.getElementById('customContent').value;
+            const width = document.getElementById('customWidth').value;
+            const height = document.getElementById('customHeight').value;
+            const type = document.getElementById('customType').value;
+            const logoType = document.getElementById('logoType').value;
+            const logoUrl = document.getElementById('logoUrl').value;
+
+            let url = `${API_BASE}/qrcode/generate`;
+            if (type === 'logo') {
+                url = `${API_BASE}/qrcode/generate-with-logo`;
+            }
+
+            const params = new URLSearchParams();
+            if (content) params.append('content', content);
+            if (width) params.append('width', width);
+            if (height) params.append('height', height);
+            
+            // 根据Logo类型设置logoUrl参数
+            if (type === 'logo') {
+                if (logoType === 'local' && logoUrl) {
+                    // 本地文件，直接使用文件名
+                    params.append('logoUrl', logoUrl);
+                } else if (logoType === 'url' && logoUrl) {
+                    // 网络URL
+                    params.append('logoUrl', logoUrl);
+                }
+                // default类型不传logoUrl，使用默认Logo
+            }
+
+            const fullUrl = `${url}?${params.toString()}`;
+            loadQrcode('customQrcode', fullUrl);
+        }
+
+        // 下载自定义二维码
+        function downloadCustomQrcode() {
+            const content = document.getElementById('customContent').value;
+            const width = document.getElementById('customWidth').value;
+            const height = document.getElementById('customHeight').value;
+            const type = document.getElementById('customType').value;
+            const logoType = document.getElementById('logoType').value;
+            const logoUrl = document.getElementById('logoUrl').value;
+
+            let url = `${API_BASE}/qrcode/generate`;
+            if (type === 'logo') {
+                url = `${API_BASE}/qrcode/generate-with-logo`;
+            }
+
+            const params = new URLSearchParams();
+            if (content) params.append('content', content);
+            if (width) params.append('width', width);
+            if (height) params.append('height', height);
+            
+            // 根据Logo类型设置logoUrl参数
+            if (type === 'logo') {
+                if (logoType === 'local' && logoUrl) {
+                    params.append('logoUrl', logoUrl);
+                } else if (logoType === 'url' && logoUrl) {
+                    params.append('logoUrl', logoUrl);
+                }
+            }
+
+            const fullUrl = `${url}?${params.toString()}`;
+            
+            // 创建下载链接
+            const link = document.createElement('a');
+            link.href = fullUrl;
+            link.download = `qrcode-${Date.now()}.png`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    </script>
+</body>
+</html>
