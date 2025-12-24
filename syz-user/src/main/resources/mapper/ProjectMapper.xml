@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cuco.syzuser.mapper.ProjectMapper">
+    
+    <!-- 查询所有项目类型 -->
+    <select id="findAll" resultType="com.cuco.syzuser.entity.Project">
+        SELECT * FROM project ORDER BY id
+    </select>
+    
+    <!-- 根据ID查询 -->
+    <select id="findById" resultType="com.cuco.syzuser.entity.Project">
+        SELECT * FROM project WHERE id = #{id}
+    </select>
+    
+    <!-- 根据项目类型查询 -->
+    <select id="findByType" resultType="com.cuco.syzuser.entity.Project">
+        SELECT * FROM project WHERE project_type = #{projectType} LIMIT 1
+    </select>
+    
+</mapper>

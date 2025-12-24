@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cuco.syzuser.mapper.ModalIdentifierMapper">
+    
+    <!-- 根据模态标识值查询 -->
+    <select id="findByValue" resultType="com.cuco.syzuser.entity.ModalIdentifier">
+        SELECT * FROM biz_modal_identifier WHERE modal_value = #{modalValue}
+    </select>
+    
+    <!-- 根据模态标识码查询（雪花算法生成的字符串） -->
+    <select id="findByModalValue" resultType="com.cuco.syzuser.entity.ModalIdentifier">
+        SELECT * FROM biz_modal_identifier WHERE modal_value = #{modalValue}
+    </select>
+    
+    <!-- 根据双因子码值查询模态标识列表 -->
+    <select id="findByTwoFactorValue" resultType="com.cuco.syzuser.entity.ModalIdentifier">
+        SELECT * FROM biz_modal_identifier WHERE two_factor_value = #{twoFactorValue} AND status = 'VALID'
+    </select>
+    
+    <!-- 插入模态标识 -->
+    <insert id="insert" useGeneratedKeys="true" keyProperty="modalId" keyColumn="modal_id">
+        INSERT INTO biz_modal_identifier(modal_value, two_factor_value, user_id, identifier_type, status, hash_value, create_time)
+        VALUES(#{modalValue}, #{twoFactorValue}, #{userId}, #{identifierType}, #{status}, #{hashValue}, NOW())
+    </insert>
+    
+    <!-- 更新状态 -->
+    <update id="updateStatus">
+        UPDATE biz_modal_identifier SET status = #{status} WHERE modal_value = #{modalValue}
+    </update>
+    
+    <!-- 根据用户ID查询模态标识列表 -->
+    <select id="findByUserId" resultType="com.cuco.syzuser.entity.ModalIdentifier">
+        SELECT * FROM biz_modal_identifier WHERE user_id = #{userId} AND status = 'VALID'
+        ORDER BY modal_id DESC
+    </select>
+    
+    <!-- 根据用户ID和项目类型查询 -->
+    <select id="findByUserIdAndType" resultType="com.cuco.syzuser.entity.ModalIdentifier">
+        SELECT * FROM biz_modal_identifier 
+        WHERE user_id = #{userId} 
+        AND identifier_type = #{projectType}
+        AND status = 'VALID'
+        ORDER BY modal_id DESC
+    </select>
+    
+    <!-- 根据用户ID和日期范围查询 -->
+    <select id="findByUserIdAndDateRange" resultType="com.cuco.syzuser.entity.ModalIdentifier">
+        SELECT * FROM biz_modal_identifier 
+        WHERE user_id = #{userId} 
+        AND status = 'VALID'
+        AND DATE(create_time) BETWEEN #{startDate} AND #{endDate}
+        ORDER BY modal_id DESC
+    </select>
+    
+    <!-- 查询用户的模态绑定记录（关联项目信息） -->
+    <select id="findUserBindings" resultType="map">
+        SELECT 
+            m.modal_id AS modalId,
+            m.modal_value AS modalValue,
+            m.two_factor_value AS twoFactorCode,
+            m.status,
+            m.create_time AS createTime,
+            p.project_id AS projectId,
+            p.project_name AS projectName,
+            p.project_type AS projectType,
+            p.byte_size AS byteSize,
+            p.project_desc AS projectDesc,
+            p.cloud_storage_url AS cloudStorageUrl,
+            p.project_status AS projectStatus
+        FROM biz_modal_identifier m
+        INNER JOIN biz_project_info p ON m.modal_id = p.modal_id
+        WHERE m.user_id = #{userId}
+        AND m.deleted = 0
+        AND p.deleted = 0
+        <if test="projectType != null and projectType != ''">
+            AND p.project_type = #{projectType}
+        </if>
+        <if test="startDate != null and startDate != '' and endDate != null and endDate != ''">
+            AND DATE(m.create_time) BETWEEN #{startDate} AND #{endDate}
+        </if>
+        ORDER BY m.create_time DESC
+    </select>
+    
+</mapper>

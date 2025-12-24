@@ -1,0 +1,199 @@
+# ====================================
+# Java & Maven
+# ====================================
+*.class
+*.jar
+*.war
+*.ear
+*.log
+*.tmp
+*.bak
+*.swp
+*.DS_Store
+
+# Maven
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
+
+# ====================================
+# IDE
+# ====================================
+# IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+.idea_modules/
+
+# Eclipse
+.classpath
+.project
+.settings/
+.metadata
+bin/
+
+# VS Code
+.vscode/
+*.code-workspace
+
+# NetBeans
+nbproject/private/
+build/
+nbbuild/
+dist/
+nbdist/
+
+# ====================================
+# Node.js & npm
+# ====================================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Package lock files (可选择性忽略)
+# package-lock.json
+# yarn.lock
+# pnpm-lock.yaml
+
+# ====================================
+# Vue & Vite
+# ====================================
+# Vite
+dist/
+dist-ssr/
+*.local
+.vite/
+
+# Vue
+*.vue.js
+*.vue.ts
+
+# ====================================
+# uni-app
+# ====================================
+# uni-app 编译产物
+unpackage/
+.hbuilderx/
+
+# uni-app 平台特定文件
+*.wxml
+*.wxss
+*.json.backup
+
+# ====================================
+# 数据库
+# ====================================
+# 数据库备份文件
+*.sql.backup
+*.db
+*.sqlite
+*.sqlite3
+
+# ====================================
+# 配置文件（包含敏感信息）
+# ====================================
+# Spring Boot 配置文件（包含数据库密码等）
+**/application.properties
+**/application.yml
+**/application-*.properties
+**/application-*.yml
+
+# 保留模板文件
+!**/application.template.properties
+!**/application.template.yml
+
+# 环境变量文件
+.env
+.env.local
+.env.*.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# ====================================
+# 日志文件
+# ====================================
+logs/
+*.log
+log/
+
+# ====================================
+# 临时文件
+# ====================================
+*.tmp
+*.temp
+*.cache
+.cache/
+
+# ====================================
+# 操作系统
+# ====================================
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Linux
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+
+# ====================================
+# 其他
+# ====================================
+# 测试覆盖率报告
+coverage/
+*.lcov
+.nyc_output/
+
+# 文档生成
+*.pdf.backup
+docs/_build/
+
+# 压缩文件
+*.zip
+*.tar.gz
+*.rar
+*.7z
+
+# 证书和密钥文件
+*.pem
+*.key
+*.crt
+*.jks
+*.p12
+
+# ====================================
+# 项目特定（根据需要调整）
+# ====================================
+# 忽略生成的 SQL 脚本（如果不需要版本控制）
+# alter_*.sql
+# init_*.sql
+# update_*.sql
+
+# 忽略用户上传的文件
+uploads/
+files/
+static/uploads/

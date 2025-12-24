@@ -1,0 +1,94 @@
+{
+	"pages": [
+		{
+			"path": "pages-user/login/login",
+			"style": {
+				"navigationBarTitleText": "用户登录"
+			}
+		},
+		{
+			"path": "pages-user/register/register",
+			"style": {
+				"navigationBarTitleText": "用户注册"
+			}
+		},
+		{
+			"path": "pages-user/register-select/register-select",
+			"style": {
+				"navigationBarTitleText": "选择注册类型"
+			}
+		},
+		{
+			"path": "pages-user/register-enterprise/register-enterprise",
+			"style": {
+				"navigationBarTitleText": "企业注册"
+			}
+		},
+		{
+			"path": "pages-user/register-personal/register-personal",
+			"style": {
+				"navigationBarTitleText": "个人注册"
+			}
+		},
+		{
+			"path": "pages-user/reset-password/reset-password",
+			"style": {
+				"navigationBarTitleText": "重置密码"
+			}
+		},
+		{
+			"path": "pages-user/dashboard/dashboard",
+			"style": {
+				"navigationBarTitleText": "个人中心"
+			}
+		},
+		{
+			"path": "pages-user/fill-info/fill-info",
+			"style": {
+				"navigationBarTitleText": "填写信息"
+			}
+		},
+		{
+			"path": "pages-user/modal-binding/modal-binding",
+			"style": {
+				"navigationBarTitleText": "资产确权"
+			}
+		},
+		{
+			"path": "pages-user/modal-history/modal-history",
+			"style": {
+				"navigationBarTitleText": "历史记录"
+			}
+		},
+		{
+			"path": "pages-user/my-modals/my-modals",
+			"style": {
+				"navigationBarTitleText": "我的模态"
+			}
+		},
+		{
+			"path": "pages-user/project-list/project-list",
+			"style": {
+				"navigationBarTitleText": "我的项目"
+			}
+		},
+		{
+			"path": "pages-user/project-create/project-create",
+			"style": {
+				"navigationBarTitleText": "创建项目"
+			}
+		},
+		{
+			"path": "pages-user/project-detail/project-detail",
+			"style": {
+				"navigationBarTitleText": "项目详情"
+			}
+		}
+	],
+	"globalStyle": {
+		"navigationBarTextStyle": "black",
+		"navigationBarTitleText": "双因子码系统",
+		"navigationBarBackgroundColor": "#F8F8F8",
+		"backgroundColor": "#F8F8F8"
+	}
+}

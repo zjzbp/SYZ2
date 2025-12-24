@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cuco.syzuser.mapper.GridCodeMapper">
+    
+    <!-- 根据网格码值查询 -->
+    <select id="findByValue" resultType="com.cuco.syzuser.entity.GridCode">
+        SELECT * FROM biz_grid_code WHERE grid_code_value = #{gridCodeValue}
+    </select>
+    
+    <!-- 插入网格码 -->
+    <insert id="insert" useGeneratedKeys="true" keyProperty="gridCodeId" keyColumn="grid_code_id">
+        INSERT INTO biz_grid_code(grid_code_value, user_id, status, hash_value, deposit_record_id)
+        VALUES(#{gridCodeValue}, #{userId}, #{status}, #{hashValue}, #{depositRecordId})
+    </insert>
+    
+    <!-- 更新状态 -->
+    <update id="updateStatus">
+        UPDATE biz_grid_code SET status = #{status} WHERE grid_code_value = #{gridCodeValue}
+    </update>
+    
+</mapper>

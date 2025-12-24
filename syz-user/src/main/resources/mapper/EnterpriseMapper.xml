@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cuco.syzuser.mapper.EnterpriseMapper">
+
+    <!-- 根据用户ID查询企业信息 -->
+    <select id="findByUserId" resultType="com.cuco.syzuser.entity.Enterprise">
+        SELECT * FROM biz_enterprise WHERE user_id = #{userId} AND deleted = 0
+    </select>
+
+    <!-- 插入企业信息 -->
+    <insert id="insert" useGeneratedKeys="true" keyProperty="enterpriseId" keyColumn="enterprise_id">
+        INSERT INTO biz_enterprise(
+            user_id, enterprise_name, unified_social_credit_code, business_license_url,
+            legal_person_name, legal_person_id_card, legal_person_id_front_url, legal_person_id_back_url,
+            contact_phone, contact_email, enterprise_address, business_scope,
+            registered_capital, establishment_date, verification_status, remark
+        )
+        VALUES(
+            #{userId}, #{enterpriseName}, #{unifiedSocialCreditCode}, #{businessLicenseUrl},
+            #{legalPersonName}, #{legalPersonIdCard}, #{legalPersonIdFrontUrl}, #{legalPersonIdBackUrl},
+            #{contactPhone}, #{contactEmail}, #{enterpriseAddress}, #{businessScope},
+            #{registeredCapital}, #{establishmentDate}, #{verificationStatus}, #{remark}
+        )
+    </insert>
+
+    <!-- 更新企业信息 -->
+    <update id="update">
+        UPDATE biz_enterprise
+        <set>
+            <if test="enterpriseName != null">enterprise_name = #{enterpriseName},</if>
+            <if test="unifiedSocialCreditCode != null">unified_social_credit_code = #{unifiedSocialCreditCode},</if>
+            <if test="businessLicenseUrl != null">business_license_url = #{businessLicenseUrl},</if>
+            <if test="legalPersonName != null">legal_person_name = #{legalPersonName},</if>
+            <if test="legalPersonIdCard != null">legal_person_id_card = #{legalPersonIdCard},</if>
+            <if test="legalPersonIdFrontUrl != null">legal_person_id_front_url = #{legalPersonIdFrontUrl},</if>
+            <if test="legalPersonIdBackUrl != null">legal_person_id_back_url = #{legalPersonIdBackUrl},</if>
+            <if test="contactPhone != null">contact_phone = #{contactPhone},</if>
+            <if test="contactEmail != null">contact_email = #{contactEmail},</if>
+            <if test="enterpriseAddress != null">enterprise_address = #{enterpriseAddress},</if>
+            <if test="businessScope != null">business_scope = #{businessScope},</if>
+            <if test="registeredCapital != null">registered_capital = #{registeredCapital},</if>
+            <if test="establishmentDate != null">establishment_date = #{establishmentDate},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </set>
+        WHERE user_id = #{userId} AND deleted = 0
+    </update>
+
+    <!-- 根据统一社会信用代码查询企业 -->
+    <select id="findByCreditCode" resultType="com.cuco.syzuser.entity.Enterprise">
+        SELECT * FROM biz_enterprise 
+        WHERE unified_social_credit_code = #{unifiedSocialCreditCode} AND deleted = 0
+    </select>
+
+    <!-- 更新认证状态 -->
+    <update id="updateVerificationStatus">
+        UPDATE biz_enterprise 
+        SET verification_status = #{verificationStatus}, verification_time = NOW()
+        WHERE user_id = #{userId} AND deleted = 0
+    </update>
+
+</mapper>

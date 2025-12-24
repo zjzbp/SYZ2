@@ -1,0 +1,23 @@
+{
+	"name": "syz-user-uniapp",
+	"appid": "__UNI__SYZ_USER",
+	"description": "双因子码用户系统",
+	"versionName": "1.0.0",
+	"versionCode": "100",
+	"transformPx": false,
+	"h5": {
+		"router": {
+			"mode": "hash",
+			"base": "/"
+		},
+		"title": "双因子码系统"
+	},
+	"mp-weixin": {
+		"appid": "",
+		"setting": {
+			"urlCheck": false
+		},
+		"usingComponents": true
+	},
+	"vueVersion": "3"
+}
