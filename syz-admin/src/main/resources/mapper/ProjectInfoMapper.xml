@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cuco.syzadmin.mapper.ProjectInfoMapper">
+
+    <select id="selectPageWithFilters" resultType="com.cuco.syzadmin.entity.ProjectInfo">
+        SELECT * FROM biz_project_info WHERE deleted = 0
+        <if test="modalIds != null and modalIds.length > 0">
+            AND modal_id IN
+            <foreach collection="modalIds" item="id" open="(" separator="," close=")">
+                #{id}
+            </foreach>
+        </if>
+        <if test="projectName != null and projectName != ''">
+            AND project_name LIKE CONCAT('%', #{projectName}, '%')
+        </if>
+        <if test="projectType != null and projectType != ''">
+            AND project_type = #{projectType}
+        </if>
+        <if test="createTimeStart != null and createTimeStart != ''">
+            AND create_time >= #{createTimeStart}
+        </if>
+        <if test="createTimeEnd != null and createTimeEnd != ''">
+            AND create_time &lt;= #{createTimeEnd}
+        </if>
+        ORDER BY upload_time DESC
+    </select>
+
+</mapper>

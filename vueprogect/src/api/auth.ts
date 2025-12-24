@@ -23,7 +23,7 @@ export interface LoginResponse {
  */
 export const loginApi = async (data: LoginRequest): Promise<LoginResponse> => {
   return request({
-    url: '/api/login',
+    url: '/api/user/login',
     method: 'post',
     data
   })

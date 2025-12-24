@@ -17,9 +17,5 @@ public class LoginResponse {
      * 用户信息（仅包含id和name）
      */
     private UserInfoDTO user;
-    
-    public LoginResponse(String token, UserInfoDTO user) {
-        this.token = token;
-        this.user = user;
-    }
+
 }

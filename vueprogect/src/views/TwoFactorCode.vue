@@ -56,11 +56,15 @@
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="createTime" label="创建时间" width="180" />
-        <el-table-column label="操作" width="200" fixed="right">
+        <el-table-column prop="createTime" label="创建时间" width="180">
+          <template #default="{ row }">
+            {{ row.createTime ? new Date(row.createTime).toLocaleString('zh-CN') : '-' }}
+          </template>
+        </el-table-column>
+        <el-table-column prop="remainingModals" label="剩余模态标识数量" width="150" />
+        <el-table-column label="操作" width="120" fixed="right">
           <template #default="{ row }">
             <el-button type="primary" size="small" @click="handleViewDetails(row)">详情</el-button>
-            <el-button type="success" size="small" @click="handleBindResource(row)">绑定资源</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -78,40 +82,20 @@
         />
       </div>
     </el-card>
-    
-    <!-- 双因子码详情对话框 -->
-    <el-dialog
-      v-model="detailDialogVisible"
-      title="双因子码详情"
-      width="600px"
-    >
-      <el-form :model="detailForm" label-width="150px">
-        <el-form-item label="双因子码ID">
-          <el-input v-model="detailForm.twoFactorId" disabled />
-        </el-form-item>
-        <el-form-item label="双因子码">
-          <el-input v-model="detailForm.twoFactorValue" disabled />
-        </el-form-item>
-        <el-form-item label="关联网格码">
-          <el-input v-model="detailForm.gridCodeValue" disabled />
-        </el-form-item>
-        <el-form-item label="码类型">
-          <el-input v-model="detailForm.codeType" disabled />
-        </el-form-item>
-        <el-form-item label="状态">
-          <el-input v-model="detailForm.status" disabled />
-        </el-form-item>
-        <el-form-item label="创建时间">
-          <el-input v-model="detailForm.createTime" disabled />
-        </el-form-item>
-      </el-form>
-    </el-dialog>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, reactive, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
+
+// 导入双因子码API
+import {
+  getTwoFactorCodeList
+} from '@/api/twoFactorCode'
+
+const router = useRouter()
 
 // 搜索表单
 const searchForm = reactive({
@@ -129,6 +113,7 @@ const twoFactorData = ref<Array<{
   codeType: string
   status: string
   createTime: string
+  remainingModals: number
 }>>([])
 
 const loading = ref(false)
@@ -140,16 +125,7 @@ const page = reactive({
   total: 0
 })
 
-// 对话框相关
-const detailDialogVisible = ref(false)
-const detailForm = reactive({
-  twoFactorId: 0,
-  twoFactorValue: '',
-  gridCodeValue: '',
-  codeType: '',
-  status: '',
-  createTime: ''
-})
+// 对话框相关已被移除，详情功能现在跳转到新页面
 
 // 获取状态标签
 const getStatusTag = (status: string) => {
@@ -195,29 +171,28 @@ const handleReset = () => {
 const fetchTwoFactorData = async () => {
   loading.value = true
   try {
-    // 模拟数据
-    twoFactorData.value = [
-      {
-        twoFactorId: 1,
-        twoFactorValue: 'TF-ASSET-001-0001',
-        gridCodeValue: 'GR-WG-001-0001',
-        codeType: 'ASSET',
-        status: 'ACTIVATED',
-        createTime: '2023-05-01 10:10:00'
-      },
-      {
-        twoFactorId: 2,
-        twoFactorValue: 'TF-PERSONAL-002-0002',
-        gridCodeValue: 'BP-WG-002-0002',
-        codeType: 'PERSONAL',
-        status: 'ACTIVATED',
-        createTime: '2023-05-01 10:15:00'
-      }
-    ]
-    page.total = 2
+    const response = await getTwoFactorCodeList({
+      twoFactorValue: searchForm.twoFactorValue,
+      gridCodeValue: searchForm.gridCodeValue,
+      codeType: searchForm.codeType,
+      status: searchForm.status,
+      currentPage: page.currentPage,
+      pageSize: page.pageSize
+    })
+    
+    // response.data 包含实际的业务数据
+    if (response && response.data) {
+      twoFactorData.value = response.data.records || []
+      page.total = response.data.total || 0
+    } else {
+      twoFactorData.value = []
+      page.total = 0
+    }
   } catch (error) {
     console.error('获取双因子码数据失败:', error)
     ElMessage.error('获取双因子码数据失败')
+    twoFactorData.value = []
+    page.total = 0
   } finally {
     loading.value = false
   }
@@ -225,11 +200,12 @@ const fetchTwoFactorData = async () => {
 
 // 查看详情
 const handleViewDetails = (row: any) => {
-  Object.assign(detailForm, { ...row })
-  detailDialogVisible.value = true
+  // 跳转到详情页面
+  router.push(`/two-factor-code/${row.twoFactorId}`)
 }
 
 // 绑定资源
+// 该功能已从表格操作中移除，保留函数以备后续使用
 const handleBindResource = (row: any) => {
   ElMessage.success(`绑定资源到双因子码 "${row.twoFactorValue}"`)
 }

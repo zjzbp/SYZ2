@@ -4,7 +4,7 @@ import { ElMessage } from 'element-plus'
 
 // 创建 axios 实例
 const service: AxiosInstance = axios.create({
-  baseURL: 'http://localhost:8083', // 后端服务器地址
+  baseURL: 'http://localhost:8085', // 后端服务器地址
   timeout: 15000, // 请求超时时间
   headers: {
     'Content-Type': 'application/json;charset=UTF-8'

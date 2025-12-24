@@ -6,8 +6,11 @@ import Login from '@/views/Login.vue'
 import Overview from '@/views/Overview.vue'
 import GridCode from '@/views/GridCode.vue'
 import TwoFactorCode from '@/views/TwoFactorCode.vue'
+import TwoFactorCodeDetail from '@/views/TwoFactorCodeDetail.vue'
 import ModalIdentifier from '@/views/ModalIdentifier.vue'
 import ProjectClassification from '@/views/ProjectClassification.vue'
+import Statistics from '@/views/Statistics.vue'
+import UserManagement from '@/views/UserManagement.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -41,6 +44,12 @@ const router = createRouter({
           component: TwoFactorCode
         },
         {
+          path: 'two-factor-code/:id',
+          name: 'TwoFactorCodeDetail',
+          component: TwoFactorCodeDetail,
+          props: true
+        },
+        {
           path: 'modal-identifier',
           name: 'ModalIdentifier',
           component: ModalIdentifier
@@ -49,6 +58,16 @@ const router = createRouter({
           path: 'project-classification',
           name: 'ProjectClassification',
           component: ProjectClassification
+        },
+        {
+          path: 'statistics',
+          name: 'Statistics',
+          component: Statistics
+        },
+        {
+          path: 'user-management',
+          name: 'UserManagement',
+          component: UserManagement
         }
       ]
     }

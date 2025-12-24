@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cuco.syzadmin.mapper.ModalIdentifierMapper">
+
+    <select id="selectPageWithFilters" resultType="com.cuco.syzadmin.entity.ModalIdentifier">
+        SELECT * FROM biz_modal_identifier WHERE two_factor_value = #{twoFactorValue} AND deleted = 0
+        <if test="modalValue != null and modalValue != ''">
+            AND modal_value LIKE CONCAT('%', #{modalValue}, '%')
+        </if>
+        <if test="identifierType != null and identifierType != ''">
+            AND identifier_type = #{identifierType}
+        </if>
+        <if test="createTimeStart != null and createTimeStart != ''">
+            AND create_time >= #{createTimeStart}
+        </if>
+        <if test="createTimeEnd != null and createTimeEnd != ''">
+            AND create_time &lt;= #{createTimeEnd}
+        </if>
+        ORDER BY create_time DESC
+    </select>
+
+</mapper>

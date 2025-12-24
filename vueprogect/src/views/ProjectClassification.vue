@@ -22,8 +22,8 @@
             <el-option label="文档存档" value="文档存档" />
           </el-select>
         </el-form-item>
-        <el-form-item label="关联模态标识">
-          <el-input v-model="searchForm.modalValue" placeholder="请输入关联模态标识" clearable />
+        <el-form-item label="关联模态标识ID">
+          <el-input v-model="searchForm.modalId" placeholder="请输入关联模态标识ID" clearable />
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="handleSearch">搜索</el-button>
@@ -42,7 +42,7 @@
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="modalValue" label="关联模态标识" width="200" />
+        <el-table-column prop="modalId" label="关联模态标识ID" width="120" />
         <el-table-column prop="cloudStorageUrl" label="云仓库存储URL" width="250" />
         <el-table-column prop="projectDesc" label="项目描述" />
         <el-table-column prop="uploadTime" label="上传时间" width="180" />
@@ -91,8 +91,8 @@
         <el-form-item label="项目类型">
           <el-input v-model="detailForm.projectType" disabled />
         </el-form-item>
-        <el-form-item label="关联模态标识">
-          <el-input v-model="detailForm.modalValue" disabled />
+        <el-form-item label="关联模态标识ID">
+          <el-input v-model="detailForm.modalId" disabled />
         </el-form-item>
         <el-form-item label="云仓库存储URL">
           <el-input v-model="detailForm.cloudStorageUrl" disabled />
@@ -115,19 +115,24 @@
 import { ref, reactive, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
 
+// 导入项目分类API
+import {
+  getProjectClassificationList
+} from '@/api/projectClassification'
+
 // 搜索表单
 const searchForm = reactive({
   projectName: '',
   projectType: '',
-  modalValue: ''
+  modalId: ''
 })
 
 // 表格数据
 const projectData = ref<Array<{
   projectId: number
+  modalId: number
   projectName: string
   projectType: string
-  modalValue: string
   cloudStorageUrl: string
   projectDesc: string
   uploadTime: string
@@ -147,9 +152,9 @@ const page = reactive({
 const detailDialogVisible = ref(false)
 const detailForm = reactive({
   projectId: 0,
+  modalId: 0,
   projectName: '',
   projectType: '',
-  modalValue: '',
   cloudStorageUrl: '',
   projectDesc: '',
   uploadTime: '',
@@ -181,7 +186,7 @@ const handleSearch = () => {
 const handleReset = () => {
   searchForm.projectName = ''
   searchForm.projectType = ''
-  searchForm.modalValue = ''
+  searchForm.modalId = ''
   handleSearch()
 }
 
@@ -189,33 +194,27 @@ const handleReset = () => {
 const fetchProjectData = async () => {
   loading.value = true
   try {
-    // 模拟数据
-    projectData.value = [
-      {
-        projectId: 1,
-        projectName: '张三口述历史 - 2025',
-        projectType: '口述历史',
-        modalValue: 'MODAL-PROJECT-001-0001',
-        cloudStorageUrl: 'https://cloud-storage.example.com/project/oral-history-zhangsan-2025',
-        projectDesc: '2025年3月录制的乡村口述历史',
-        uploadTime: '2025-03-15 14:30:00',
-        projectStatus: 'ACTIVE'
-      },
-      {
-        projectId: 2,
-        projectName: '传统手工艺非遗记录',
-        projectType: '非遗记录',
-        modalValue: 'MODAL-PROJECT-002-0002',
-        cloudStorageUrl: 'https://cloud-storage.example.com/project/intangible-cultural-heritage',
-        projectDesc: '记录传统手工艺制作过程的视频资料',
-        uploadTime: '2025-04-20 10:15:00',
-        projectStatus: 'ACTIVE'
-      }
-    ]
-    page.total = 2
+    const response = await getProjectClassificationList({
+      projectName: searchForm.projectName,
+      projectType: searchForm.projectType,
+      modalId: searchForm.modalId,
+      currentPage: page.currentPage,
+      pageSize: page.pageSize
+    })
+    
+    // response.data 包含实际的业务数据
+    if (response && response.data) {
+      projectData.value = response.data.records || []
+      page.total = response.data.total || 0
+    } else {
+      projectData.value = []
+      page.total = 0
+    }
   } catch (error) {
     console.error('获取项目数据失败:', error)
     ElMessage.error('获取项目数据失败')
+    projectData.value = []
+    page.total = 0
   } finally {
     loading.value = false
   }

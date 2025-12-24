@@ -20,6 +20,8 @@
             <el-icon><DataAnalysis /></el-icon>
             <span>概述信息</span>
           </el-menu-item>
+
+           
           
           <el-menu-item index="/grid-code">
             <el-icon><Grid /></el-icon>
@@ -39,6 +41,15 @@
           <el-menu-item index="/project-classification">
             <el-icon><Folder /></el-icon>
             <span>项目分类管理</span>
+          </el-menu-item>
+          
+          <el-menu-item index="/statistics">
+            <el-icon><DataAnalysis /></el-icon>
+            <span>数据统计</span>
+          </el-menu-item>
+          <el-menu-item index="/user-management">
+            <el-icon><User /></el-icon>
+            <span>用户管理</span>
           </el-menu-item>
         </el-menu>
       </el-aside>
@@ -91,7 +102,8 @@ import {
   Management,
   Connection,
   Folder,
-  Bell
+  Bell,
+  User
 } from '@element-plus/icons-vue'
 
 const route = useRoute()
@@ -100,9 +112,14 @@ const username = ref('Admin')
 
 onMounted(() => {
   // 获取用户名
-  const savedUsername = localStorage.getItem('username')
-  if (savedUsername) {
-    username.value = savedUsername
+  const userInfoStr = localStorage.getItem('userInfo')
+  if (userInfoStr) {
+    try {
+      const userInfo = JSON.parse(userInfoStr)
+      username.value = userInfo.name || 'Admin'
+    } catch (e) {
+      console.error('解析用户信息失败:', e)
+    }
   }
 })
 
@@ -114,7 +131,9 @@ const currentPageTitle = computed(() => {
     '/grid-code': '网格码管理',
     '/two-factor-code': '双因子码管理',
     '/modal-identifier': '模态标识管理',
-    '/project-classification': '项目分类管理'
+    '/project-classification': '项目分类管理',
+    '/statistics': '数据统计',
+    '/user-management': '用户管理'
   }
   return titleMap[route.path] || '首页'
 })

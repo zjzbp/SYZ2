@@ -97,6 +97,12 @@
 import { ref, reactive, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
 
+// 导入网格码API
+import {
+  getGridCodeList,
+  verifyGridCode
+} from '@/api/gridCode'
+
 // 搜索表单
 const searchForm = reactive({
   gridCodeValue: '',
@@ -155,29 +161,26 @@ const handleReset = () => {
 const fetchGridCodeData = async () => {
   loading.value = true
   try {
-    // 模拟数据
-    gridCodeData.value = [
-      {
-        gridCodeId: 1,
-        gridCodeValue: 'GR-WG-001-0001',
-        status: 'VALID',
-        hashValue: '0x1a2b3c4d5e6f7890abcdef1234567890abcdef1234567890abcdef1234567890',
-        depositRecordId: 'REC-20230501-0001',
-        createTime: '2023-05-01 10:00:00'
-      },
-      {
-        gridCodeId: 2,
-        gridCodeValue: 'BP-WG-002-0002',
-        status: 'VALID',
-        hashValue: '0xf0e9d8c7b6a5948372615039281706543210fedcba9876543210fedcba987654',
-        depositRecordId: 'REC-20230501-0002',
-        createTime: '2023-05-01 10:05:00'
-      }
-    ]
-    page.total = 2
+    const response = await getGridCodeList({
+      gridCodeValue: searchForm.gridCodeValue,
+      status: searchForm.status,
+      currentPage: page.currentPage,
+      pageSize: page.pageSize
+    })
+    
+    // response.data 包含实际的业务数据
+    if (response && response.data) {
+      gridCodeData.value = response.data.records || []
+      page.total = response.data.total || 0
+    } else {
+      gridCodeData.value = []
+      page.total = 0
+    }
   } catch (error) {
     console.error('获取网格码数据失败:', error)
     ElMessage.error('获取网格码数据失败')
+    gridCodeData.value = []
+    page.total = 0
   } finally {
     loading.value = false
   }

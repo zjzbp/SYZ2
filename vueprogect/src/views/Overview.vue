@@ -97,52 +97,41 @@ import {
   DataAnalysis,
   TrendCharts,
   CaretTop,
-  CaretBottom
+  CaretBottom,
+  User,
+  Connection,
+  Folder
 } from '@element-plus/icons-vue'
 import * as echarts from 'echarts'
 import AnimatedNumber from '@/components/AnimatedNumber.vue'
 
-const stats = ref([
-  {
-    title: '网格码总数',
-    value: 1234,
-    prefix: '',
-    gradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-    icon: 'Grid',
-    trend: '+12%',
-    trendClass: 'up',
-    trendIcon: 'CaretTop'
-  },
-  {
-    title: '双因子码数量',
-    value: 56789,
-    prefix: '',
-    gradient: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
-    icon: 'Management',
-    trend: '+8%',
-    trendClass: 'up',
-    trendIcon: 'CaretTop'
-  },
-  {
-    title: '模态标识生成量',
-    value: 123456,
-    prefix: '',
-    gradient: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
-    icon: 'DataAnalysis',
-    trend: '+15%',
-    trendClass: 'up',
-    trendIcon: 'CaretTop'
-  },
-  {
-    title: '资源确权率',
-    value: 92.5,
-    prefix: '',
-    gradient: 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)',
-    icon: 'TrendCharts',
-    trend: '-2%',
-    trendClass: 'down',
-    trendIcon: 'CaretBottom'
-  }
+// 导入统计API
+import {
+  getStatisticsData,
+  getUserTrendData,
+  getTwoFactorCodeTypeDistribution,
+  getGridCodeStatusDistribution,
+  getModalIdentifierTypeDistribution
+} from '@/api/statistics'
+
+// 统计数据
+interface StatItem {
+  title: string;
+  value: number;
+  prefix: string;
+  gradient: string;
+  icon: any;
+  trend: string;
+  trendClass: string;
+  trendIcon: any;
+}
+
+const stats = ref<StatItem[]>([
+  { title: '总用户数', value: 0, prefix: '', gradient: 'linear-gradient(45deg, #3498db, #8e44ad)', icon: User, trend: '+5.2%', trendClass: 'up', trendIcon: CaretTop },
+  { title: '网格码总数', value: 0, prefix: '', gradient: 'linear-gradient(45deg, #e74c3c, #e67e22)', icon: Grid, trend: '+3.1%', trendClass: 'up', trendIcon: CaretTop },
+  { title: '双因子码总数', value: 0, prefix: '', gradient: 'linear-gradient(45deg, #2ecc71, #1abc9c)', icon: Management, trend: '+7.8%', trendClass: 'up', trendIcon: CaretTop },
+  { title: '模态标识总数', value: 0, prefix: '', gradient: 'linear-gradient(45deg, #f39c12, #d35400)', icon: Connection, trend: '+2.5%', trendClass: 'up', trendIcon: CaretTop },
+  { title: '项目总数', value: 0, prefix: '', gradient: 'linear-gradient(45deg, #9b59b6, #34495e)', icon: Folder, trend: '+1.9%', trendClass: 'up', trendIcon: CaretTop }
 ])
 
 // 图表相关
@@ -152,30 +141,13 @@ let trendChart: echarts.ECharts | null = null
 let pieChart: echarts.ECharts | null = null
 
 // 最新活动
+// TODO: 从API获取最新活动
 const activities = ref([
   {
-    type: 'grid-create',
-    content: '创建了新的网格码：GR-WG-001-0001',
-    operator: '张三',
-    time: '2023-05-01 10:30:00'
-  },
-  {
-    type: 'code-generate',
-    content: '生成了新的双因子码：BP-WG-001-0001',
-    operator: '李四',
-    time: '2023-05-01 10:25:00'
-  },
-  {
-    type: 'resource-bind',
-    content: '将模态标识绑定到双因子码：GR-WG-002-0005',
-    operator: '王五',
-    time: '2023-05-01 10:20:00'
-  },
-  {
-    type: 'grid-update',
-    content: '更新了网格码信息：GR-WG-003-0002',
-    operator: '赵六',
-    time: '2023-05-01 10:15:00'
+    type: '',
+    content: '',
+    operator: '',
+    time: ''
   }
 ])
 
@@ -215,40 +187,32 @@ const initCharts = () => {
 }
 
 // 渲染趋势图
-const renderTrendChart = () => {
+const renderTrendChart = (trendData?: any[]) => {
   if (!trendChart) return
+  
+  // 如果提供了趋势数据，使用该数据；否则使用默认空数据
+  const dates = trendData ? trendData.map(item => item.date) : []
+  const counts = trendData ? trendData.map(item => item.count) : []
   
   const option = {
     tooltip: {
       trigger: 'axis'
     },
     legend: {
-      data: ['网格码总数', '双因子码', '模态标识']
+      data: ['用户注册数']
     },
     xAxis: {
       type: 'category',
-      data: ['1月', '2月', '3月', '4月', '5月', '6月']
+      data: dates
     },
     yAxis: {
       type: 'value'
     },
     series: [
       {
-        name: '网格码总数',
+        name: '用户注册数',
         type: 'line',
-        data: [1000, 1050, 1100, 1150, 1200, 1234],
-        smooth: true
-      },
-      {
-        name: '双因子码',
-        type: 'line',
-        data: [45000, 48000, 50000, 52000, 55000, 56789],
-        smooth: true
-      },
-      {
-        name: '模态标识',
-        type: 'line',
-        data: [90000, 98000, 105000, 112000, 118000, 123456],
+        data: counts,
         smooth: true
       }
     ]
@@ -258,8 +222,14 @@ const renderTrendChart = () => {
 }
 
 // 渲染饼图
-const renderPieChart = () => {
+const renderPieChart = (pieData?: any[]) => {
   if (!pieChart) return
+  
+  // 确保饼图数据显示中文状态值
+  const chartData = pieData ? pieData.map(item => ({
+    name: item.name || item.status || item.type || item.label,
+    value: item.value || item.count
+  })) : []
   
   const option = {
     tooltip: {
@@ -270,13 +240,10 @@ const renderPieChart = () => {
     },
     series: [
       {
-        name: '网格类型',
+        name: '网格码状态',
         type: 'pie',
         radius: ['40%', '70%'],
-        data: [
-          { value: 856, name: '个人网格' },
-          { value: 378, name: '企业网格' }
-        ]
+        data: chartData
       }
     ]
   }
@@ -295,8 +262,39 @@ const handleResize = () => {
 }
 
 // 组件挂载时加载数据
-onMounted(() => {
+onMounted(async () => {
   initCharts()
+  
+  try {
+    // 获取统计数据
+    const statsResponse = await getStatisticsData()
+    if (statsResponse && statsResponse.data) {
+      const data = statsResponse.data
+      if (stats.value && stats.value.length >= 5) {
+        if (stats.value[0]) stats.value[0].value = data.totalUsers || 0
+        if (stats.value[1]) stats.value[1].value = data.totalGridCodes || 0
+        if (stats.value[2]) stats.value[2].value = data.totalTwoFactorCodes || 0
+        if (stats.value[3]) stats.value[3].value = data.totalModalIdentifiers || 0
+        if (stats.value[4]) stats.value[4].value = data.totalProjects || 0
+      }
+    }
+    
+    // 获取用户趋势数据
+    const userTrendResponse = await getUserTrendData()
+    if (userTrendResponse && userTrendResponse.data) {
+      const trendData = userTrendResponse.data
+      renderTrendChart(trendData)
+    }
+    
+    // 获取网格码状态分布数据
+    const gridCodeStatusResponse = await getGridCodeStatusDistribution()
+    if (gridCodeStatusResponse && gridCodeStatusResponse.data) {
+      const statusData = gridCodeStatusResponse.data
+      renderPieChart(statusData)
+    }
+  } catch (error) {
+    console.error('获取统计数据失败:', error)
+  }
   
   // 监听窗口大小变化
   window.addEventListener('resize', handleResize)

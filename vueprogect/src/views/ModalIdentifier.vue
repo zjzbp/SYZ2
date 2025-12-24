@@ -115,6 +115,11 @@
 import { ref, reactive, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
 
+// 导入模态标识API
+import {
+  getModalIdentifierList
+} from '@/api/modalIdentifier'
+
 // 搜索表单
 const searchForm = reactive({
   modalValue: '',
@@ -179,31 +184,28 @@ const handleReset = () => {
 const fetchModalData = async () => {
   loading.value = true
   try {
-    // 模拟数据
-    modalData.value = [
-      {
-        modalId: 1,
-        modalValue: 'MODAL-PROJECT-001-0001',
-        twoFactorValue: 'TF-ASSET-001-0001',
-        identifierType: 'PROJECT',
-        status: 'VALID',
-        hashValue: '0xa1b2c3d4e5f67890abcdef1234567890abcdef1234567890abcdef1234567890',
-        createTime: '2023-05-01 10:20:00'
-      },
-      {
-        modalId: 2,
-        modalValue: 'MODAL-PROJECT-002-0002',
-        twoFactorValue: 'TF-PERSONAL-002-0002',
-        identifierType: 'PROJECT',
-        status: 'VALID',
-        hashValue: '0x09f8e7d6c5b4a3928176543210fedcba9876543210fedcba9876543210fedcba',
-        createTime: '2023-05-01 10:25:00'
-      }
-    ]
-    page.total = 2
+    const response = await getModalIdentifierList({
+      modalValue: searchForm.modalValue,
+      twoFactorValue: searchForm.twoFactorValue,
+      identifierType: searchForm.identifierType,
+      status: searchForm.status,
+      currentPage: page.currentPage,
+      pageSize: page.pageSize
+    })
+    
+    // response.data 包含实际的业务数据
+    if (response && response.data) {
+      modalData.value = response.data.records || []
+      page.total = response.data.total || 0
+    } else {
+      modalData.value = []
+      page.total = 0
+    }
   } catch (error) {
     console.error('获取模态标识数据失败:', error)
     ElMessage.error('获取模态标识数据失败')
+    modalData.value = []
+    page.total = 0
   } finally {
     loading.value = false
   }
