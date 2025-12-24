@@ -191,6 +191,9 @@ export default {
 	font-size: 26rpx;
 	border: none;
 	padding: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }
 
 .code-btn[disabled] {

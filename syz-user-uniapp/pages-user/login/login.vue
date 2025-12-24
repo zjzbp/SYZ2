@@ -160,7 +160,7 @@ export default {
 				if (res.code === 1 || res.code === 200) {
 					const data = res.data
 					uni.setStorageSync('token', data.token)
-					uni.setStorageSync('userId', data.id)
+					uni.setStorageSync('userId', data.userId)  // 修复：使用userId而不是id
 					uni.setStorageSync('userInfo', JSON.stringify(data))
 					
 					uni.showToast({

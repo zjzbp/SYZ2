@@ -379,6 +379,7 @@ export default {
 
 .code-btn {
 	height: 88rpx;
+	line-height: 88rpx;
 	padding: 0 30rpx;
 	background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 	color: #ffffff;
@@ -386,6 +387,9 @@ export default {
 	font-size: 26rpx;
 	border: none;
 	flex-shrink: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }
 
 .code-btn[disabled] {

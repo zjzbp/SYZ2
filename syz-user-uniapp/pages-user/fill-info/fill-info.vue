@@ -47,6 +47,21 @@ export default {
 	},
 	onLoad() {
 		this.userId = uni.getStorageSync('userId')
+		console.log('获取到的userId:', this.userId)
+		
+		// 如果userID不存在，提示重新登录
+		if (!this.userId) {
+			uni.showModal({
+				title: '提示',
+				content: '请先登录',
+				showCancel: false,
+				success: () => {
+					uni.redirectTo({
+						url: '/pages-user/login/login'
+					})
+				}
+			})
+		}
 	},
 	methods: {
 		async handleSubmit() {
@@ -54,6 +69,23 @@ export default {
 				uni.showToast({ title: '请输入网格码', icon: 'none' })
 				return
 			}
+			
+			// 再次检查userId
+			if (!this.userId) {
+				uni.showModal({
+					title: '提示',
+					content: '请先登录',
+					showCancel: false,
+					success: () => {
+						uni.redirectTo({
+							url: '/pages-user/login/login'
+						})
+					}
+				})
+				return
+			}
+			
+			console.log('提交的数据:', { userId: this.userId, gridCode: this.gridCode })
 			
 			this.loading = true
 			try {
@@ -69,6 +101,7 @@ export default {
 					uni.showToast({ title: res.msg || '提交失败', icon: 'none' })
 				}
 			} catch (error) {
+				console.error('提交错误:', error)
 				uni.showToast({ title: '提交失败', icon: 'none' })
 			} finally {
 				this.loading = false
