@@ -28,8 +28,8 @@ public class QrCodeService {
     private static final String LOGIN_URL = "http://localhost:5173/#/";
     private static final int DEFAULT_WIDTH = 300;
     private static final int DEFAULT_HEIGHT = 300;
-    private static final int LOGO_WIDTH = 60;
-    private static final int LOGO_HEIGHT = 60;
+    private static final int LOGO_WIDTH = 80;
+    private static final int LOGO_HEIGHT = 80;
 
     /**
      * 生成普通二维码（返回字节数组）
@@ -196,47 +196,48 @@ public class QrCodeService {
                                           int qrWidth, int qrHeight) {
         Graphics2D g2d = qrImage.createGraphics();
         
-        // 设置高质量渲染
+        // 设置最高质量渲染
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-        g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+        g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
         g2d.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_QUALITY);
         g2d.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
+        g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
         
         // 计算Logo位置（居中）
         int logoX = (qrWidth - LOGO_WIDTH) / 2;
         int logoY = (qrHeight - LOGO_HEIGHT) / 2;
         
-        // 绘制白色圆角矩形背景
+        // 绘制白色圆角矩形背景（增加边距）
+        int padding = 8;
         g2d.setColor(Color.WHITE);
         RoundRectangle2D.Float roundRect = new RoundRectangle2D.Float(
-            logoX - 5, logoY - 5, 
-            LOGO_WIDTH + 10, LOGO_HEIGHT + 10, 
-            15, 15
+            logoX - padding, logoY - padding, 
+            LOGO_WIDTH + padding * 2, LOGO_HEIGHT + padding * 2, 
+            20, 20
         );
         g2d.fill(roundRect);
         
-        // 创建缩放后的彩色Logo图片
+        // 使用更高质量的缩放算法
+        Image scaledImage = logoImage.getScaledInstance(LOGO_WIDTH, LOGO_HEIGHT, Image.SCALE_SMOOTH);
+        
+        // 创建高质量的缩放后图像
         BufferedImage scaledLogo = new BufferedImage(LOGO_WIDTH, LOGO_HEIGHT, BufferedImage.TYPE_INT_ARGB);
         Graphics2D logoG2d = scaledLogo.createGraphics();
         
-        // 设置高质量缩放
-        logoG2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+        // 设置最高质量缩放
+        logoG2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
         logoG2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
         logoG2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         logoG2d.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_QUALITY);
+        logoG2d.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
         
         // 绘制缩放后的Logo（保留颜色）
-        logoG2d.drawImage(logoImage, 0, 0, LOGO_WIDTH, LOGO_HEIGHT, null);
+        logoG2d.drawImage(scaledImage, 0, 0, null);
         logoG2d.dispose();
         
         // 将缩放后的Logo绘制到二维码上
         g2d.drawImage(scaledLogo, logoX, logoY, null);
-        
-        // 绘制Logo边框
-        g2d.setColor(new Color(74, 144, 226)); // #4A90E2
-        g2d.setStroke(new BasicStroke(2));
-        g2d.draw(roundRect);
         
         g2d.dispose();
         return qrImage;
