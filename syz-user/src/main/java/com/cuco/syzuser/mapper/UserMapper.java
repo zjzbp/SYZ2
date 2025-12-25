@@ -45,4 +45,7 @@ public interface UserMapper {
     
     // 统计已使用的模态标识数量
     Long countUsedModals();
+    
+    // 累加用户总分数
+    void addTotalScore(@Param("userId") Long userId, @Param("score") Double score);
 }

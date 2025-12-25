@@ -42,5 +42,8 @@ public class User {
     
     @TableField("status")
     private String status;
+    
+    @TableField("total_score")
+    private Double totalScore;
 
 }

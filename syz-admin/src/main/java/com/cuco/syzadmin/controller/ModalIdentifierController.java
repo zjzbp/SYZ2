@@ -27,11 +27,13 @@ public class ModalIdentifierController {
             @RequestParam(required = false) String twoFactorValue,
             @RequestParam(required = false) String identifierType,
             @RequestParam(required = false) String status,
+            @RequestParam(required = false) String createTimeStart,
+            @RequestParam(required = false) String createTimeEnd,
             @RequestParam(defaultValue = "1") Integer currentPage,
             @RequestParam(defaultValue = "10") Integer pageSize) {
         try {
             IPage<ModalIdentifier> pageResult = modalIdentifierService.getModalIdentifierList(
-                    modalValue, twoFactorValue, identifierType, status, currentPage, pageSize);
+                    modalValue, twoFactorValue, identifierType, status, createTimeStart, createTimeEnd, currentPage, pageSize);
             return Result.success("获取模态标识列表成功", pageResult);
         } catch (Exception e) {
             return Result.error("获取模态标识列表失败: " + e.getMessage());

@@ -1,4 +1,4 @@
-package com.cuco.syzuser.entity;
+package com.cuco.syzadmin.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
@@ -17,9 +17,6 @@ public class Project {
     
     @TableField("project_type")
     private String projectType;   // 项目类型
-    
-    @TableField("project_desc")
-    private String projectDesc;   // 项目描述
     
     @TableField("create_time")
     private LocalDateTime createTime;  // 创建时间

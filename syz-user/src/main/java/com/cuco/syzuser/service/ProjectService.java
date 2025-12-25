@@ -2,6 +2,8 @@ package com.cuco.syzuser.service;
 
 import com.cuco.syzuser.entity.ProjectInfo;
 import com.cuco.syzuser.mapper.ProjectInfoMapper;
+import com.cuco.syzuser.mapper.ProjectMapper;
+import com.cuco.syzuser.mapper.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,6 +15,12 @@ public class ProjectService {
 
     @Autowired
     private ProjectInfoMapper projectInfoMapper;
+    
+    @Autowired
+    private ProjectMapper projectMapper;
+    
+    @Autowired
+    private UserMapper userMapper;
 
     /**
      * 创建项目
@@ -39,6 +47,12 @@ public class ProjectService {
         }
         
         projectInfoMapper.insert(projectInfo);
+        
+        // 根据项目类型获取分数并累加到用户总分
+        Double projectScore = projectMapper.getScoreByProjectType(projectInfo.getProjectType());
+        if (projectScore != null && projectScore > 0) {
+            userMapper.addTotalScore(projectInfo.getUserId(), projectScore);
+        }
     }
 
     /**

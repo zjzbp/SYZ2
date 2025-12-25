@@ -11,6 +11,7 @@ import ModalIdentifier from '@/views/ModalIdentifier.vue'
 import ProjectClassification from '@/views/ProjectClassification.vue'
 import Statistics from '@/views/Statistics.vue'
 import UserManagement from '@/views/UserManagement.vue'
+import UserDetailPage from '@/views/UserDetailPage.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -68,6 +69,12 @@ const router = createRouter({
           path: 'user-management',
           name: 'UserManagement',
           component: UserManagement
+        },
+        {
+          path: 'user-detail/:id',
+          name: 'UserDetail',
+          component: UserDetailPage,
+          props: true
         }
       ]
     }

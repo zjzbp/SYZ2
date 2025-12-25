@@ -9,14 +9,14 @@
           </div>
         </div>
       </template>
-      
+
       <!-- 网格码搜索 -->
       <el-form :inline="true" class="search-form">
         <el-form-item label="网格码">
           <el-input v-model="searchForm.gridCodeValue" placeholder="请输入网格码" clearable />
         </el-form-item>
         <el-form-item label="状态">
-          <el-select v-model="searchForm.status" placeholder="请选择状态" clearable>
+          <el-select v-model="searchForm.status" placeholder="请选择状态" clearable style="width: 150px">
             <el-option label="有效" value="VALID" />
             <el-option label="失效" value="INVALID" />
           </el-select>
@@ -26,7 +26,7 @@
           <el-button @click="handleReset">重置</el-button>
         </el-form-item>
       </el-form>
-      
+
       <!-- 网格码表格 -->
       <el-table :data="gridCodeData" style="width: 100%" border stripe v-loading="loading">
         <el-table-column prop="gridCodeId" label="ID" width="80" />
@@ -48,7 +48,7 @@
           </template>
         </el-table-column>
       </el-table>
-      
+
       <!-- 分页 -->
       <div class="pagination">
         <el-pagination
@@ -62,13 +62,9 @@
         />
       </div>
     </el-card>
-    
+
     <!-- 网格码详情对话框 -->
-    <el-dialog
-      v-model="detailDialogVisible"
-      title="网格码详情"
-      width="600px"
-    >
+    <el-dialog v-model="detailDialogVisible" title="网格码详情" width="600px">
       <el-form :model="detailForm" label-width="150px">
         <el-form-item label="网格码ID">
           <el-input v-model="detailForm.gridCodeId" disabled />
@@ -98,26 +94,25 @@ import { ref, reactive, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
 
 // 导入网格码API
-import {
-  getGridCodeList,
-  verifyGridCode
-} from '@/api/gridCode'
+import { getGridCodeList, verifyGridCode } from '@/api/gridCode'
 
 // 搜索表单
 const searchForm = reactive({
   gridCodeValue: '',
-  status: ''
+  status: '',
 })
 
 // 表格数据
-const gridCodeData = ref<Array<{
-  gridCodeId: number
-  gridCodeValue: string
-  status: string
-  hashValue: string
-  depositRecordId: string
-  createTime: string
-}>>([])
+const gridCodeData = ref<
+  Array<{
+    gridCodeId: number
+    gridCodeValue: string
+    status: string
+    hashValue: string
+    depositRecordId: string
+    createTime: string
+  }>
+>([])
 
 const loading = ref(false)
 
@@ -125,7 +120,7 @@ const loading = ref(false)
 const page = reactive({
   currentPage: 1,
   pageSize: 10,
-  total: 0
+  total: 0,
 })
 
 // 对话框相关
@@ -136,7 +131,7 @@ const detailForm = reactive({
   status: '',
   hashValue: '',
   depositRecordId: '',
-  createTime: ''
+  createTime: '',
 })
 
 // 新增网格码
@@ -165,13 +160,17 @@ const fetchGridCodeData = async () => {
       gridCodeValue: searchForm.gridCodeValue,
       status: searchForm.status,
       currentPage: page.currentPage,
-      pageSize: page.pageSize
+      pageSize: page.pageSize,
     })
-    
+
     // response.data 包含实际的业务数据
+    console.log('网格码API返回:', response)
     if (response && response.data) {
-      gridCodeData.value = response.data.records || []
-      page.total = response.data.total || 0
+      // 检查是否是嵌套的 data 结构
+      const pageData = response.data.data || response.data
+      gridCodeData.value = pageData.records || []
+      page.total = pageData.total || 0
+      console.log('分页数据:', { records: gridCodeData.value.length, total: page.total })
     } else {
       gridCodeData.value = []
       page.total = 0

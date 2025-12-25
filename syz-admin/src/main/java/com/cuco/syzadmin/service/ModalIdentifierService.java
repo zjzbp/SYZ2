@@ -21,7 +21,7 @@ public class ModalIdentifierService extends ServiceImpl<ModalIdentifierMapper, M
     /**
      * 分页查询模态标识
      */
-    public IPage<ModalIdentifier> getModalIdentifierList(String modalValue, String twoFactorValue, String identifierType, String status, Integer currentPage, Integer pageSize) {
+    public IPage<ModalIdentifier> getModalIdentifierList(String modalValue, String twoFactorValue, String identifierType, String status, String createTimeStart, String createTimeEnd, Integer currentPage, Integer pageSize) {
         LambdaQueryWrapper<ModalIdentifier> queryWrapper = new LambdaQueryWrapper<>();
         
         // 按模态标识值查询
@@ -43,6 +43,17 @@ public class ModalIdentifierService extends ServiceImpl<ModalIdentifierMapper, M
         if (status != null && !status.trim().isEmpty()) {
             queryWrapper.eq(ModalIdentifier::getStatus, status);
         }
+        
+        // 按创建时间范围查询
+        if (createTimeStart != null && !createTimeStart.trim().isEmpty()) {
+            queryWrapper.ge(ModalIdentifier::getCreateTime, createTimeStart);
+        }
+        if (createTimeEnd != null && !createTimeEnd.trim().isEmpty()) {
+            queryWrapper.le(ModalIdentifier::getCreateTime, createTimeEnd);
+        }
+        
+        // 按创建时间降序排列
+        queryWrapper.orderByDesc(ModalIdentifier::getCreateTime);
         
         // 创建分页对象
         Page<ModalIdentifier> page = new Page<>(currentPage, pageSize);

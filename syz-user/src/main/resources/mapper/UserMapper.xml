@@ -74,4 +74,11 @@
         SELECT COUNT(DISTINCT modal_id) FROM user_modal
     </select>
     
+    <!-- 累加用户总分数 -->
+    <update id="addTotalScore">
+        UPDATE biz_user 
+        SET total_score = IFNULL(total_score, 0) + #{score}
+        WHERE user_id = #{userId} AND deleted = 0
+    </update>
+    
 </mapper>

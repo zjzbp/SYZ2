@@ -37,4 +37,16 @@ public interface ModalIdentifierMapper extends BaseMapper<ModalIdentifier> {
                                                   @Param("createTimeStart") String createTimeStart,
                                                   @Param("createTimeEnd") String createTimeEnd,
                                                   Page<?> page);
+    
+    /**
+     * 根据用户ID查询模态标识列表
+     */
+    @Select("SELECT * FROM biz_modal_identifier WHERE user_id = #{userId} AND deleted = 0 ORDER BY create_time DESC")
+    List<ModalIdentifier> selectByUserId(@Param("userId") Long userId);
+    
+    /**
+     * 根据用户ID统计模态标识数量
+     */
+    @Select("SELECT COUNT(*) FROM biz_modal_identifier WHERE user_id = #{userId} AND deleted = 0")
+    Integer countByUserId(@Param("userId") Long userId);
 }

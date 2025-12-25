@@ -6,6 +6,8 @@ export function getModalIdentifierList(params: {
   twoFactorValue?: string
   identifierType?: string
   status?: string
+  createTimeStart?: string
+  createTimeEnd?: string
   currentPage: number
   pageSize: number
 }) {

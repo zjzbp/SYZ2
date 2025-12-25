@@ -63,14 +63,6 @@
 					<text class="card-title">我的模态</text>
 					<text class="card-desc">绑定记录</text>
 				</view>
-						
-				<view class="menu-card" @click="goToProjectList">
-					<view class="card-icon" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
-						<text class="icon-text">📁</text>
-					</view>
-					<text class="card-title">我的项目</text>
-					<text class="card-desc">项目管理</text>
-				</view>
 				
 				<view class="menu-card" @click="refreshData">
 					<view class="card-icon" style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);">
@@ -206,12 +198,6 @@ export default {
 		goToMyModals() {
 			uni.navigateTo({
 				url: '/pages-user/my-modals/my-modals'
-			})
-		},
-			
-		goToProjectList() {
-			uni.navigateTo({
-				url: '/pages-user/project-list/project-list'
 			})
 		},
 		

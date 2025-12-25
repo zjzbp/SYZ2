@@ -17,4 +17,10 @@ public interface EnterpriseMapper extends BaseMapper<Enterprise> {
      */
     @Select("SELECT enterprise_name FROM biz_enterprise WHERE user_id = #{userId} AND deleted = 0")
     String selectNameByUserId(@Param("userId") Long userId);
+    
+    /**
+     * 根据用户ID查询企业详情
+     */
+    @Select("SELECT * FROM biz_enterprise WHERE user_id = #{userId} AND deleted = 0")
+    Enterprise selectByUserId(@Param("userId") Long userId);
 }

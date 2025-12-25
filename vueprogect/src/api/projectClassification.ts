@@ -63,10 +63,30 @@ export function deleteProjectClassification(id: number) {
   })
 }
 
-// 预览项目
-export function previewProjectClassification(id: number) {
+// 获取所有项目类型
+export function getProjectTypes() {
   return request({
-    url: `/api/projectClassification/preview/${id}`,
+    url: '/api/project/types',
     method: 'get'
+  })
+}
+
+// 新增项目类型
+export function createProject(data: {
+  projectType: string
+  score?: number
+}) {
+  return request({
+    url: '/api/project',
+    method: 'post',
+    data
+  })
+}
+
+// 删除项目类型
+export function deleteProjectType(projectType: string) {
+  return request({
+    url: `/api/project/type/${encodeURIComponent(projectType)}`,
+    method: 'delete'
   })
 }

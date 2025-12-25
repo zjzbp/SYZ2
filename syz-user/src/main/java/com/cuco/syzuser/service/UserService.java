@@ -1,5 +1,6 @@
 package com.cuco.syzuser.service;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.cuco.syzuser.dto.*;
 import com.cuco.syzuser.entity.*;
 import com.cuco.syzuser.mapper.*;
@@ -506,7 +507,10 @@ public class UserService {
     
     // 查询所有可用项目类型
     public List<Project> getAvailableProjects() {
-        return projectMapper.findAll();
+        // 使用 MyBatis-Plus 的 selectList 查询所有未删除的项目
+        LambdaQueryWrapper<Project> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(Project::getIsDelete, 0);
+        return projectMapper.selectList(queryWrapper);
     }
     
     // 生成模态标识码（雪花算法）
@@ -566,6 +570,12 @@ public class UserService {
         int updated = twoFactorCodeMapper.decreaseRemainingModals(user.getTwoFactorCode());
         if (updated == 0) {
             throw new RuntimeException("扣减模态数量失败，请重试");
+        }
+        
+        // 7. 根据项目类型获取分数并累加到用户总分
+        Double projectScore = projectMapper.getScoreByProjectType(req.getProjectType());
+        if (projectScore != null && projectScore > 0) {
+            userMapper.addTotalScore(req.getUserId(), projectScore);
         }
     }
     

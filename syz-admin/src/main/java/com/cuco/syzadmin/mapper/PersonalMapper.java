@@ -17,4 +17,10 @@ public interface PersonalMapper extends BaseMapper<Personal> {
      */
     @Select("SELECT real_name FROM biz_personal WHERE user_id = #{userId} AND deleted = 0")
     String selectNameByUserId(@Param("userId") Long userId);
+    
+    /**
+     * 根据用户ID查询个人详情
+     */
+    @Select("SELECT * FROM biz_personal WHERE user_id = #{userId} AND deleted = 0")
+    Personal selectByUserId(@Param("userId") Long userId);
 }

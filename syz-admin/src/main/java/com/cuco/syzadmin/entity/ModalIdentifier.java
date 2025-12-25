@@ -3,6 +3,7 @@ package com.cuco.syzadmin.entity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
@@ -21,6 +22,9 @@ public class ModalIdentifier {
 
     @TableField("two_factor_value")
     private String twoFactorValue; // 关联双因子码值
+    
+    @TableField("user_id")
+    private Long userId; // 关联用户ID
 
     @TableField("identifier_type")
     private String identifierType; // 标识类型：PROJECT-项目类（如口述历史）
@@ -29,8 +33,15 @@ public class ModalIdentifier {
     private String status; // 状态：VALID-有效、INVALID-失效
 
     @TableField("hash_value")
-    private String hashValue; // 区块钾存证哈希值
+    private String hashValue; // 区块链存证哈希值
 
     @TableField("create_time")
     private String createTime; // 创建时间
+    
+    @TableField("update_time")
+    private String updateTime; // 更新时间
+    
+    @TableLogic
+    @TableField("deleted")
+    private Integer deleted; // 逻辑删除：0-未删除，1-已删除
 }

@@ -4,9 +4,6 @@
       <template #header>
         <div class="card-header">
           <span class="card-title">双因子码管理</span>
-          <div class="header-actions">
-            <el-button type="primary" @click="handleAddTwoFactorCode">新增双因子码</el-button>
-          </div>
         </div>
       </template>
       
@@ -19,13 +16,13 @@
           <el-input v-model="searchForm.gridCodeValue" placeholder="请输入关联网格码" clearable />
         </el-form-item>
         <el-form-item label="码类型">
-          <el-select v-model="searchForm.codeType" placeholder="请选择码类型" clearable>
+          <el-select v-model="searchForm.codeType" placeholder="请选择码类型" clearable style="width: 150px">
             <el-option label="资产类" value="ASSET" />
             <el-option label="个人类" value="PERSONAL" />
           </el-select>
         </el-form-item>
         <el-form-item label="状态">
-          <el-select v-model="searchForm.status" placeholder="请选择状态" clearable>
+          <el-select v-model="searchForm.status" placeholder="请选择状态" clearable style="width: 150px">
             <el-option label="已激活" value="ACTIVATED" />
             <el-option label="冻结" value="FROZEN" />
             <el-option label="失效" value="INVALID" />
@@ -181,9 +178,13 @@ const fetchTwoFactorData = async () => {
     })
     
     // response.data 包含实际的业务数据
+    console.log('双因子码API返回:', response)
     if (response && response.data) {
-      twoFactorData.value = response.data.records || []
-      page.total = response.data.total || 0
+      // 检查是否是嵌套的 data 结构
+      const pageData = response.data.data || response.data
+      twoFactorData.value = pageData.records || []
+      page.total = pageData.total || 0
+      console.log('分页数据:', { records: twoFactorData.value.length, total: page.total })
     } else {
       twoFactorData.value = []
       page.total = 0

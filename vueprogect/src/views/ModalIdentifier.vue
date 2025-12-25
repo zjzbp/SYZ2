@@ -4,30 +4,45 @@
       <template #header>
         <div class="card-header">
           <span class="card-title">模态标识管理</span>
-          <div class="header-actions">
-            <el-button type="primary" @click="handleAddModalIdentifier">新增模态标识</el-button>
-          </div>
         </div>
       </template>
       
       <!-- 模态标识搜索 -->
       <el-form :inline="true" class="search-form">
         <el-form-item label="模态标识">
-          <el-input v-model="searchForm.modalValue" placeholder="请输入模态标识" clearable />
+          <el-input v-model="searchForm.modalValue" placeholder="请输入模态标识" clearable style="width: 200px" />
         </el-form-item>
         <el-form-item label="关联双因子码">
-          <el-input v-model="searchForm.twoFactorValue" placeholder="请输入关联双因子码" clearable />
+          <el-input v-model="searchForm.twoFactorValue" placeholder="请输入关联双因子码" clearable style="width: 200px" />
         </el-form-item>
         <el-form-item label="标识类型">
-          <el-select v-model="searchForm.identifierType" placeholder="请选择标识类型" clearable>
+          <el-select v-model="searchForm.identifierType" placeholder="请选择标识类型" clearable style="width: 150px">
             <el-option label="项目类" value="PROJECT" />
           </el-select>
         </el-form-item>
         <el-form-item label="状态">
-          <el-select v-model="searchForm.status" placeholder="请选择状态" clearable>
+          <el-select v-model="searchForm.status" placeholder="请选择状态" clearable style="width: 120px">
             <el-option label="有效" value="VALID" />
             <el-option label="失效" value="INVALID" />
           </el-select>
+        </el-form-item>
+        <el-form-item label="创建时间">
+          <el-date-picker
+            v-model="searchForm.createTimeStart"
+            type="datetime"
+            placeholder="开始时间"
+            style="width: 180px"
+            value-format="YYYY-MM-DD HH:mm:ss"
+          />
+        </el-form-item>
+        <el-form-item label="至">
+          <el-date-picker
+            v-model="searchForm.createTimeEnd"
+            type="datetime"
+            placeholder="结束时间"
+            style="width: 180px"
+            value-format="YYYY-MM-DD HH:mm:ss"
+          />
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="handleSearch">搜索</el-button>
@@ -56,10 +71,9 @@
         </el-table-column>
         <el-table-column prop="hashValue" label="区块链存证哈希值" width="250" />
         <el-table-column prop="createTime" label="创建时间" width="180" />
-        <el-table-column label="操作" width="200" fixed="right">
+        <el-table-column label="操作" width="120" fixed="right">
           <template #default="{ row }">
             <el-button type="primary" size="small" @click="handleViewDetails(row)">详情</el-button>
-            <el-button type="success" size="small" @click="handleBindProject(row)">绑定项目</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -125,7 +139,9 @@ const searchForm = reactive({
   modalValue: '',
   twoFactorValue: '',
   identifierType: '',
-  status: ''
+  status: '',
+  createTimeStart: '',
+  createTimeEnd: ''
 })
 
 // 表格数据
@@ -177,6 +193,8 @@ const handleReset = () => {
   searchForm.twoFactorValue = ''
   searchForm.identifierType = ''
   searchForm.status = ''
+  searchForm.createTimeStart = ''
+  searchForm.createTimeEnd = ''
   handleSearch()
 }
 
@@ -189,14 +207,20 @@ const fetchModalData = async () => {
       twoFactorValue: searchForm.twoFactorValue,
       identifierType: searchForm.identifierType,
       status: searchForm.status,
+      createTimeStart: searchForm.createTimeStart,
+      createTimeEnd: searchForm.createTimeEnd,
       currentPage: page.currentPage,
       pageSize: page.pageSize
     })
     
     // response.data 包含实际的业务数据
+    console.log('模态标识API返回:', response)
     if (response && response.data) {
-      modalData.value = response.data.records || []
-      page.total = response.data.total || 0
+      // 检查是否是嵌套的 data 结构
+      const pageData = response.data.data || response.data
+      modalData.value = pageData.records || []
+      page.total = pageData.total || 0
+      console.log('分页数据:', { records: modalData.value.length, total: page.total })
     } else {
       modalData.value = []
       page.total = 0

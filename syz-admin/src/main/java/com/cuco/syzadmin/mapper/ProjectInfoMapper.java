@@ -20,14 +20,18 @@ public interface ProjectInfoMapper extends BaseMapper<ProjectInfo> {
      * 根据模态标识ID数组查询项目信息
      */
     @Select("<script>" +
-            "SELECT * FROM biz_project_info WHERE " +
-            "<if test='modalIds != null and modalIds.length > 0'>" +
-            "modal_id IN " +
+            "SELECT * FROM biz_project_info WHERE deleted = 0 " +
+            "<choose>" +
+            "<when test='modalIds != null and modalIds.length > 0'>" +
+            "AND modal_id IN " +
             "<foreach collection='modalIds' item='id' open='(' separator=',' close=')'> " +
             "#{id}" +
-            "</foreach> AND " +
-            "</if>" +
-            "deleted = 0" +
+            "</foreach>" +
+            "</when>" +
+            "<otherwise>" +
+            "AND 1 = 0" +
+            "</otherwise>" +
+            "</choose>" +
             "</script>")
     List<ProjectInfo> selectByModalIds(@Param("modalIds") Long[] modalIds);
         
@@ -46,4 +50,16 @@ public interface ProjectInfoMapper extends BaseMapper<ProjectInfo> {
      */
     @Select("SELECT DISTINCT project_type FROM biz_project_info WHERE deleted = 0 AND project_type IS NOT NULL ORDER BY project_type")
     List<String> selectDistinctProjectTypes();
+    
+    /**
+     * 根据用户ID查询项目信息列表
+     */
+    @Select("SELECT * FROM biz_project_info WHERE user_id = #{userId} AND deleted = 0 ORDER BY create_time DESC")
+    List<ProjectInfo> selectByUserId(@Param("userId") Long userId);
+    
+    /**
+     * 根据用户ID统计各项目类别的数量
+     */
+    @Select("SELECT project_type, COUNT(*) as count FROM biz_project_info WHERE user_id = #{userId} AND deleted = 0 GROUP BY project_type ORDER BY count DESC")
+    List<java.util.Map<String, Object>> countByUserIdGroupByType(@Param("userId") Long userId);
 }

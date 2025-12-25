@@ -29,9 +29,9 @@ public class ProjectInfoService extends ServiceImpl<ProjectInfoMapper, ProjectIn
             queryWrapper.like(ProjectInfo::getProjectName, projectName);
         }
         
-        // 按项目类型查询
+        // 按项目类型模糊查询
         if (projectType != null && !projectType.trim().isEmpty()) {
-            queryWrapper.eq(ProjectInfo::getProjectType, projectType);
+            queryWrapper.like(ProjectInfo::getProjectType, projectType);
         }
         
         // 按关联模态标识查询
